@@ -19,11 +19,12 @@ def setup_nltk():
 
 setup_nltk()
 
-# ✅ Now safely import from nltk.corpus
+# ✅ Now safe to import after downloads
 from nltk.corpus import wordnet
 from nltk import pos_tag
+from nltk.tokenize import word_tokenize
 
-# ----- Set page config -----
+# ----- Streamlit config -----
 st.set_page_config(
     page_title="English lexical Analyzer",
     page_icon="📘",
@@ -42,11 +43,10 @@ st.sidebar.info(
     - Tag part of speech in context
     """
 )
-
 st.sidebar.markdown("---")
 st.sidebar.write("👤 Developed by [AmulyaDugyala]")
 
-# ----- Custom Header -----
+# ----- Header -----
 st.markdown("""
     <h1 style='text-align: center; color: #2E86AB;'>
         🧠 English lexical Analyzer
@@ -55,10 +55,9 @@ st.markdown("""
         Understand the meaning, usage, and structure of English words - all offline!
     </p>
 """, unsafe_allow_html=True)
-
 st.markdown("---")
 
-# ----- Input Area -----
+# ----- Main App -----
 word = st.text_input("🔍 Enter a word to analyze:", "").strip()
 
 if word:
@@ -67,7 +66,6 @@ if word:
     synsets = wordnet.synsets(word)
 
     if synsets:
-        # Definitions
         st.markdown("#### 📖 Definitions")
         for i, syn in enumerate(synsets[:3]):
             st.markdown(f"**{i+1}. ({syn.pos()})** {syn.definition()}")
@@ -84,21 +82,19 @@ if word:
             st.markdown("#### 🔴 Antonyms")
             st.write(", ".join(list(antonyms)[:10]) or "None")
 
-        # Examples
+        st.markdown("#### ✍️ Example Sentences")
         examples = []
         for syn in synsets:
             examples.extend(syn.examples())
-        st.markdown("#### ✍️ Example Sentences")
         if examples:
             for i, ex in enumerate(examples[:3]):
                 st.markdown(f"> {ex}")
         else:
             st.info("No example sentences found.")
-
     else:
         st.error("❌ Word not found in WordNet.")
 
-    # Syllable count
+    # Syllable Count
     st.markdown("#### 🔢 Syllable Count")
     syllables = textstat.syllable_count(word)
     st.success(f"Estimated syllables: **{syllables}**")
@@ -106,7 +102,7 @@ if word:
     # POS Tagging
     st.markdown("#### 🧠 Part of Speech (POS) Tagging")
     example_sentence = f"I think the word {word} is interesting to learn."
-    tagged = pos_tag(example_sentence.split())
+    tagged = pos_tag(word_tokenize(example_sentence))
     word_tags = [f"**{w}** → `{t}`" for w, t in tagged if w.lower() == word.lower()]
     st.write("Context sentence:", example_sentence)
     st.write("Tagged as:", ", ".join(word_tags) or "Not tagged.")
