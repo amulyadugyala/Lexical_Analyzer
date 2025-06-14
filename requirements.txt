@@ -1,0 +1,6 @@
+streamlit
+nltk
+textstat
+streamlit>=1.30
+nltk>=3.8.1
+textstat>=0.7.3
