@@ -2,6 +2,23 @@ import streamlit as st
 from nltk.corpus import wordnet
 from nltk import pos_tag
 import textstat
+import nltk
+
+# Define required nltk resources
+nltk_data = {
+    "punkt": "tokenizers/punkt",
+    "wordnet": "corpora/wordnet",
+    "omw-1.4": "corpora/omw-1.4",
+    "averaged_perceptron_tagger": "taggers/averaged_perceptron_tagger"
+}
+
+# Check and download if missing
+for key, path in nltk_data.items():
+    try:
+        nltk.data.find(path)
+    except LookupError:
+        nltk.download(key)
+
 
 # ----- Set page config -----
 st.set_page_config(
