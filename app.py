@@ -1,22 +1,22 @@
 import streamlit as st
 import nltk
-nltk_resources = {
-    'punkt': 'tokenizers/punkt',
-    'wordnet': 'corpora/wordnet',
-    'omw-1.4': 'corpora/omw-1.4',
-    'averaged_perceptron_tagger': 'taggers/averaged_perceptron_tagger'
-}
 
-for resource, path in nltk_resources.items():
-    try:
-        nltk.data.find(path)
-    except LookupError:
-        nltk.download(resource)
+# 🔧 Safe download of NLTK resources
+@st.cache_data
+def setup_nltk():
+    resources = {
+        'punkt': 'tokenizers/punkt',
+        'wordnet': 'corpora/wordnet',
+        'omw-1.4': 'corpora/omw-1.4',
+        'averaged_perceptron_tagger': 'taggers/averaged_perceptron_tagger'
+    }
+    for key, path in resources.items():
+        try:
+            nltk.data.find(path)
+        except LookupError:
+            nltk.download(key)
 
-from nltk.corpus import wordnet
-from nltk import pos_tag
-import textstat
-
+setup_nltk()
 
 # ----- Set page config -----
 st.set_page_config(
