@@ -1,7 +1,8 @@
 import streamlit as st
 import nltk
+import textstat
 
-# ✅ Ensure NLTK resources are downloaded before use
+# --- Ensure required NLTK resources are available ---
 @st.cache_data
 def setup_nltk():
     resources = {
@@ -10,14 +11,17 @@ def setup_nltk():
         'omw-1.4': 'corpora/omw-1.4',
         'averaged_perceptron_tagger': 'taggers/averaged_perceptron_tagger'
     }
-    for resource, path in resources.items():
+    for key, path in resources.items():
         try:
             nltk.data.find(path)
         except LookupError:
-            nltk.download(resource)
+            nltk.download(key)
 
-# ⬇️ Must run setup BEFORE any import from nltk.corpus
 setup_nltk()
+
+# ✅ Now safely import from nltk.corpus
+from nltk.corpus import wordnet
+from nltk import pos_tag
 
 # ----- Set page config -----
 st.set_page_config(
@@ -68,7 +72,7 @@ if word:
         for i, syn in enumerate(synsets[:3]):
             st.markdown(f"**{i+1}. ({syn.pos()})** {syn.definition()}")
 
-        # Synonyms & Antonyms (side by side)
+        # Synonyms & Antonyms
         synonyms = {lemma.name() for s in synsets for lemma in s.lemmas()}
         antonyms = {ant.name() for s in synsets for lemma in s.lemmas() for ant in lemma.antonyms()}
 
@@ -80,7 +84,7 @@ if word:
             st.markdown("#### 🔴 Antonyms")
             st.write(", ".join(list(antonyms)[:10]) or "None")
 
-        # Example sentences
+        # Examples
         examples = []
         for syn in synsets:
             examples.extend(syn.examples())
@@ -94,12 +98,12 @@ if word:
     else:
         st.error("❌ Word not found in WordNet.")
 
-    # Syllable Count
+    # Syllable count
     st.markdown("#### 🔢 Syllable Count")
     syllables = textstat.syllable_count(word)
     st.success(f"Estimated syllables: **{syllables}**")
 
-    # POS Tag in a sentence
+    # POS Tagging
     st.markdown("#### 🧠 Part of Speech (POS) Tagging")
     example_sentence = f"I think the word {word} is interesting to learn."
     tagged = pos_tag(example_sentence.split())
