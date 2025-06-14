@@ -1,7 +1,7 @@
 import streamlit as st
 import nltk
 
-# 🔧 Safe download of NLTK resources
+# ✅ Ensure NLTK resources are downloaded before use
 @st.cache_data
 def setup_nltk():
     resources = {
@@ -10,12 +10,13 @@ def setup_nltk():
         'omw-1.4': 'corpora/omw-1.4',
         'averaged_perceptron_tagger': 'taggers/averaged_perceptron_tagger'
     }
-    for key, path in resources.items():
+    for resource, path in resources.items():
         try:
             nltk.data.find(path)
         except LookupError:
-            nltk.download(key)
+            nltk.download(resource)
 
+# ⬇️ Must run setup BEFORE any import from nltk.corpus
 setup_nltk()
 
 # ----- Set page config -----
